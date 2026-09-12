@@ -7,6 +7,8 @@ source "$here/lib.sh"
 # shellcheck source=volume.sh
 source "$here/volume.sh"
 
+DEFAULT_DRAW_PATH=data/volumes.webp
+
 usage() {
   cat <<'EOF'
 Usage:
@@ -27,6 +29,9 @@ Usage:
   cat volumes.txt | gelkao volume show
                                      draw the leaf / volume pool / volume tree from the
                                      placement table Hetzner support sends you
+  cat volumes.txt | gelkao volume draw [-o <path>]
+                                     render the same placement as a treemap webp
+                                     (default: data/volumes.webp)
 
 The customer number is read from the invoice page itself — there is nothing to type.
 EOF
@@ -88,12 +93,23 @@ invoice_cmd() {
 
 volume_cmd() {
   local verb=${1-}
-  [[ -n "$verb" ]] || die "volume needs a subcommand: show"
+  [[ -n "$verb" ]] || die "volume needs a subcommand: show or draw"
   shift
+  local OPTIND out=""
+  while getopts ":o:h" opt; do
+    case "$opt" in
+      o) out=$OPTARG ;;
+      h) usage; exit 0 ;;
+      :) die "option -$OPTARG requires a value" ;;
+      \?) die "unknown option: -$OPTARG" ;;
+    esac
+  done
+  shift $((OPTIND - 1))
   [[ $# -eq 0 ]] || die "unexpected argument: $1"
   case "$verb" in
-    show) volume_show "$here" ;;
-    *)    die "unknown volume subcommand: $verb - try show" ;;
+    show) [[ -z "$out" ]] || die "-o is not valid for show"; volume_show "$here" ;;
+    draw) volume_draw "$here" "${out:-$DEFAULT_DRAW_PATH}" ;;
+    *)    die "unknown volume subcommand: $verb - try show or draw" ;;
   esac
 }
 
