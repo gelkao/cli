@@ -160,8 +160,8 @@ ROWS
 @test "colour_rects grades each leaf red, amber or green by how many volumes it carries" {
   run colour_rects <<RECTS
 leaf	hot		20	0	0	10	10
-leaf	warm		10	0	0	10	10
-leaf	cool		9	0	0	10	10
+leaf	warm		2	0	0	10	10
+leaf	cool		1	0	0	10	10
 RECTS
   [ "$status" -eq 0 ]
   [[ "${lines[0]}" = *$'	#b22222' ]]
@@ -180,4 +180,13 @@ RECTS
   [[ "${lines[1]}" = *$'	#b22222' ]]
   [[ "${lines[2]}" = *$'	#cc6f6f' ]]
   [[ "${lines[3]}" = *$'	#e1abab' ]]
+}
+
+@test "colour_rects draws a green block solid, since its pools can never differ" {
+  run colour_rects <<RECTS
+leaf	cool		1	0	0	10	10
+pool	cool	73	1	0	0	10	10
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "${lines[1]}" = *$'	#227a3f' ]]
 }

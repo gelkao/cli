@@ -42,7 +42,7 @@ RAG_RED='178 34 34'
 RAG_AMBER='199 124 12'
 RAG_GREEN='34 122 63'
 RED_VOLUMES=20
-AMBER_VOLUMES=10
+AMBER_VOLUMES=2
 POOL_SHADE_AMBER=0.35
 POOL_SHADE_GREEN=0.62
 LEAF_GUTTER=10
@@ -162,16 +162,17 @@ colour_rects() {
       for (i = 1; i <= 3; i++) hex = hex sprintf("%02x", int(channel[i] + (255 - channel[i]) * amount))
       return hex
     }
-    function shade(volumes) {
-      if (volumes >= red_at) return 0
-      if (volumes >= amber_at) return shade_amber
+    function shade(leaf_volumes, pool_volumes) {
+      if (leaf_volumes < amber_at) return 0
+      if (pool_volumes >= red_at) return 0
+      if (pool_volumes >= amber_at) return shade_amber
       return shade_green
     }
     { row[NR] = $0; level[NR] = $1; leaf[NR] = $2; size[NR] = $4 }
     END {
       for (i = 1; i <= NR; i++) {
-        if (level[i] == "leaf") base[leaf[i]] = graded(size[i])
-        printf "%s\t%s\n", row[i], lightened(base[leaf[i]], level[i] == "leaf" ? 0 : shade(size[i]))
+        if (level[i] == "leaf") { base[leaf[i]] = graded(size[i]); leaf_volumes[leaf[i]] = size[i] }
+        printf "%s\t%s\n", row[i], lightened(base[leaf[i]], level[i] == "leaf" ? 0 : shade(leaf_volumes[leaf[i]], size[i]))
       }
     }
   '
