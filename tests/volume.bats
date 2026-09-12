@@ -149,12 +149,12 @@ ROWS
   [ "${lines[0]}" = $'leaf\tleaf-a\t\t1\t5.00\t5.00\t90.00\t90.00' ]
 }
 
-@test "placement_rects pads the pools off their leaf edge" {
+@test "placement_rects fills each leaf with its pools, edge to edge" {
   run placement_rects 100 100 <<'ROWS'
 leaf-a	73	1
 ROWS
   [ "$status" -eq 0 ]
-  [ "${lines[1]}" = $'pool\tleaf-a\t73\t1\t8.00\t8.00\t84.00\t84.00' ]
+  [ "${lines[1]}" = $'pool\tleaf-a\t73\t1\t5.00\t5.00\t90.00\t90.00' ]
 }
 
 @test "colour_rects grades each leaf red, amber or green by how many volumes it carries" {
