@@ -25,6 +25,14 @@ require_curl() {
   command -v curl >/dev/null 2>&1 || die "curl not found — install curl to download invoices"
 }
 
+require_rsvg() {
+  command -v rsvg-convert >/dev/null 2>&1 || die "rsvg-convert not found - install librsvg to draw the placement map"
+}
+
+require_cwebp() {
+  command -v cwebp >/dev/null 2>&1 || die "cwebp not found - install libwebp to draw the placement map"
+}
+
 info() {
   local fd=$1 msg=$2 g='' r=''
   [ -t "$fd" ] && { g=$'\e[90m'; r=$'\e[0m'; }

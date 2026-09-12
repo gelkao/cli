@@ -99,3 +99,23 @@ ROWS
   [ "$status" -ne 0 ]
   [[ "$output" = *"unknown volume subcommand"* ]]
 }
+
+@test "gelkao volume draw turns the placement on stdin into a webp" {
+  command -v rsvg-convert >/dev/null && command -v cwebp >/dev/null \
+    || skip "needs rsvg-convert and cwebp"
+  local out="$BATS_TEST_TMPDIR/fleet.webp"
+  run bash -c "printf 'volume id\tvolume pool id\tleaf\n900000001\t73\tleaf-a\n' | '$ROOT/gelkao' volume draw -o '$out'"
+  [ "$status" -eq 0 ]
+  [ -s "$out" ]
+  run bash -c "head -c 12 '$out' | tr -d '\000'"
+  [[ "$output" = RIFF*WEBP ]]
+}
+
+@test "gelkao volume draw says where it put the file" {
+  command -v rsvg-convert >/dev/null && command -v cwebp >/dev/null \
+    || skip "needs rsvg-convert and cwebp"
+  local out="$BATS_TEST_TMPDIR/named.webp"
+  run bash -c "printf 'volume id\tvolume pool id\tleaf\n900000001\t73\tleaf-a\n' | '$ROOT/gelkao' volume draw -o '$out' 2>&1"
+  [ "$status" -eq 0 ]
+  [[ "$output" = *"$out"* ]]
+}
