@@ -119,3 +119,19 @@ ROWS
   [ "$status" -eq 0 ]
   [[ "$output" = *"$out"* ]]
 }
+
+@test "placement_rects lays each leaf's pools out inside it" {
+  run placement_rects 100 100 <<'ROWS'
+leaf-a	73	1
+leaf-a	73	2
+leaf-a	74	3
+ROWS
+  [ "$status" -eq 0 ]
+  [ "${#lines[@]}" -eq 3 ]
+  [[ "${lines[0]}" = $'leaf\tleaf-a\t\t3\t'* ]]
+  [[ "${lines[1]}" = $'pool\tleaf-a\t73\t2\t'* ]]
+  [[ "${lines[2]}" = $'pool\tleaf-a\t74\t1\t'* ]]
+  local area
+  area=$(printf '%s\n' "${lines[@]}" | awk -F'\t' '$1 == "pool" { a += $7 * $8 } END { printf "%.0f", a }')
+  [ "$area" -eq 10000 ]
+}

@@ -48,9 +48,19 @@ leaf_sizes() {
   '
 }
 
+pool_sizes() {
+  local leaf=$1
+  awk -F'\t' -v leaf="$leaf" '
+    $1 != leaf { next }
+    !($2 in count) { order[++ranked] = $2 }
+    { count[$2]++ }
+    END { for (i = 1; i <= ranked; i++) printf "%s\t%d\n", order[i], count[order[i]] }
+  '
+}
+
 squarified_rects() {
-  local width=$1 height=$2
-  awk -F'\t' -v W="$width" -v H="$height" '
+  local left=$1 top=$2 width=$3 height=$4
+  awk -F'\t' -v X="$left" -v Y="$top" -v W="$width" -v H="$height" '
     function worst(sum, biggest, smallest, side, scale,   area, wide, tall) {
       area = sum * scale
       if (area <= 0 || side <= 0 || smallest <= 0) return 1e18
@@ -64,7 +74,7 @@ squarified_rects() {
     { leaf[++n] = $1; size[n] = $2; total += $2 }
     END {
       if (n == 0 || total == 0) exit
-      x = 0; y = 0; w = W; h = H
+      x = X; y = Y; w = W; h = H
       scale = W * H / total
       first = 1
       while (first <= n) {
@@ -105,6 +115,16 @@ squarified_rects() {
   '
 }
 
+placement_rects() {
+  local width=$1 height=$2 rows leaf leaf_size x y w h
+  rows=$(cat)
+  while IFS=$'\t' read -r leaf leaf_size x y w h; do
+    printf 'leaf\t%s\t\t%s\t%s\t%s\t%s\t%s\n' "$leaf" "$leaf_size" "$x" "$y" "$w" "$h"
+    printf '%s\n' "$rows" | pool_sizes "$leaf" | squarified_rects "$x" "$y" "$w" "$h" \
+      | awk -F'\t' -v leaf="$leaf" '{ printf "pool\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", leaf, $1, $2, $3, $4, $5, $6 }'
+  done < <(printf '%s\n' "$rows" | leaf_sizes | squarified_rects 0 0 "$width" "$height")
+}
+
 rects_to_svg() {
   local width=$1 height=$2
   awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" -v fill="$LEAF_FILL" '
@@ -112,7 +132,7 @@ rects_to_svg() {
       printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\">", W, H
       printf "<rect width=\"%d\" height=\"%d\" fill=\"%s\"/>", W, H, bg
     }
-    { printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $3, $4, $5, $6, fill, bg }
+    { printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, fill, bg }
     END { print "</svg>" }
   '
 }
@@ -130,8 +150,7 @@ volume_draw() {
   rows=$(placement_rows_ranked "$assets")
   [[ -n "$rows" ]] || die "no placement rows on stdin - pipe in the table Hetzner support sent you"
   printf '%s\n' "$rows" \
-    | leaf_sizes \
-    | squarified_rects "$CANVAS_W" "$CANVAS_H" \
+    | placement_rects "$CANVAS_W" "$CANVAS_H" \
     | rects_to_svg "$CANVAS_W" "$CANVAS_H" \
     | svg_to_webp "$out"
   info 2 "wrote $out"
