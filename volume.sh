@@ -2,6 +2,9 @@
 
 placement_rows_ranked() {
   local assets=$1
+  if [ -t 0 ]; then
+    die "volume reads the placement table on stdin - pipe in the file Hetzner support sent you"
+  fi
   require_sqlite
   sqlite3 :memory: \
     "CREATE TABLE attachment(id TEXT, pool TEXT, leaf TEXT);" \
