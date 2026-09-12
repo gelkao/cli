@@ -39,6 +39,8 @@ CANVAS_W=1280
 CANVAS_H=800
 CANVAS_BG='#fafaf9'
 LEAF_FILL='#3f5c70'
+LEAF_GUTTER=10
+POOL_PAD=6
 
 leaf_sizes() {
   awk -F'\t' '
@@ -115,14 +117,28 @@ squarified_rects() {
   '
 }
 
+inset_rects() {
+  local margin=$1
+  awk -F'\t' -v m="$margin" '
+    function shrunk(side) { return (side > m ? side - m : 0) }
+    { printf "%s\t%s\t%.2f\t%.2f\t%.2f\t%.2f\n", $1, $2, $3 + m / 2, $4 + m / 2, shrunk($5), shrunk($6) }
+  '
+}
+
+pool_bounds() {
+  local x=$1 y=$2 w=$3 h=$4
+  printf 'bounds\t0\t%s\t%s\t%s\t%s\n' "$x" "$y" "$w" "$h" | inset_rects "$POOL_PAD" | cut -f3-
+}
+
 placement_rects() {
-  local width=$1 height=$2 rows leaf leaf_size x y w h
+  local width=$1 height=$2 rows leaf leaf_size x y w h px py pw ph
   rows=$(cat)
   while IFS=$'\t' read -r leaf leaf_size x y w h; do
     printf 'leaf\t%s\t\t%s\t%s\t%s\t%s\t%s\n' "$leaf" "$leaf_size" "$x" "$y" "$w" "$h"
-    printf '%s\n' "$rows" | pool_sizes "$leaf" | squarified_rects "$x" "$y" "$w" "$h" \
+    IFS=$'\t' read -r px py pw ph < <(pool_bounds "$x" "$y" "$w" "$h")
+    printf '%s\n' "$rows" | pool_sizes "$leaf" | squarified_rects "$px" "$py" "$pw" "$ph" \
       | awk -F'\t' -v leaf="$leaf" '{ printf "pool\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", leaf, $1, $2, $3, $4, $5, $6 }'
-  done < <(printf '%s\n' "$rows" | leaf_sizes | squarified_rects 0 0 "$width" "$height")
+  done < <(printf '%s\n' "$rows" | leaf_sizes | squarified_rects 0 0 "$width" "$height" | inset_rects "$LEAF_GUTTER")
 }
 
 rects_to_svg() {

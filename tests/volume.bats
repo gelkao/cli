@@ -131,7 +131,28 @@ ROWS
   [[ "${lines[0]}" = $'leaf\tleaf-a\t\t3\t'* ]]
   [[ "${lines[1]}" = $'pool\tleaf-a\t73\t2\t'* ]]
   [[ "${lines[2]}" = $'pool\tleaf-a\t74\t1\t'* ]]
-  local area
-  area=$(printf '%s\n' "${lines[@]}" | awk -F'\t' '$1 == "pool" { a += $7 * $8 } END { printf "%.0f", a }')
-  [ "$area" -eq 10000 ]
+  local ratio escaped
+  ratio=$(printf '%s\n' "${lines[@]}" | awk -F'\t' '$1 == "pool" { area[$3] = $7 * $8 } END { printf "%.2f", area[73] / area[74] }')
+  [ "$ratio" = "2.00" ]
+  escaped=$(printf '%s\n' "${lines[@]}" | awk -F'\t' '
+    $1 == "leaf" { lx = $5; ly = $6; lw = $7; lh = $8 }
+    $1 == "pool" && ($5 < lx - 0.01 || $6 < ly - 0.01 || $5 + $7 > lx + lw + 0.01 || $6 + $8 > ly + lh + 0.01) { bad++ }
+    END { print bad + 0 }')
+  [ "$escaped" -eq 0 ]
+}
+
+@test "placement_rects insets each leaf so blank pixels separate the domains" {
+  run placement_rects 100 100 <<'ROWS'
+leaf-a	73	1
+ROWS
+  [ "$status" -eq 0 ]
+  [ "${lines[0]}" = $'leaf\tleaf-a\t\t1\t5.00\t5.00\t90.00\t90.00' ]
+}
+
+@test "placement_rects pads the pools off their leaf edge" {
+  run placement_rects 100 100 <<'ROWS'
+leaf-a	73	1
+ROWS
+  [ "$status" -eq 0 ]
+  [ "${lines[1]}" = $'pool\tleaf-a\t73\t1\t8.00\t8.00\t84.00\t84.00' ]
 }
