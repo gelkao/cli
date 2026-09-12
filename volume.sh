@@ -46,7 +46,6 @@ AMBER_VOLUMES=2
 POOL_SHADE_AMBER=0.35
 POOL_SHADE_GREEN=0.62
 LEAF_GUTTER=10
-POOL_PAD=6
 
 leaf_sizes() {
   awk -F'\t' '
@@ -131,18 +130,12 @@ inset_rects() {
   '
 }
 
-pool_bounds() {
-  local x=$1 y=$2 w=$3 h=$4
-  printf 'bounds\t0\t%s\t%s\t%s\t%s\n' "$x" "$y" "$w" "$h" | inset_rects "$POOL_PAD" | cut -f3-
-}
-
 placement_rects() {
-  local width=$1 height=$2 rows leaf leaf_size x y w h px py pw ph
+  local width=$1 height=$2 rows leaf leaf_size x y w h
   rows=$(cat)
   while IFS=$'\t' read -r leaf leaf_size x y w h; do
     printf 'leaf\t%s\t\t%s\t%s\t%s\t%s\t%s\n' "$leaf" "$leaf_size" "$x" "$y" "$w" "$h"
-    IFS=$'\t' read -r px py pw ph < <(pool_bounds "$x" "$y" "$w" "$h")
-    printf '%s\n' "$rows" | pool_sizes "$leaf" | squarified_rects "$px" "$py" "$pw" "$ph" \
+    printf '%s\n' "$rows" | pool_sizes "$leaf" | squarified_rects "$x" "$y" "$w" "$h" \
       | awk -F'\t' -v leaf="$leaf" '{ printf "pool\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n", leaf, $1, $2, $3, $4, $5, $6 }'
   done < <(printf '%s\n' "$rows" | leaf_sizes | squarified_rects 0 0 "$width" "$height" | inset_rects "$LEAF_GUTTER")
 }
