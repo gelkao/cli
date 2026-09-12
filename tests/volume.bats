@@ -168,3 +168,16 @@ RECTS
   [[ "${lines[1]}" = *$'	#c77c0c' ]]
   [[ "${lines[2]}" = *$'	#227a3f' ]]
 }
+
+@test "colour_rects bands each pool on the same rule as its leaf" {
+  run colour_rects <<RECTS
+leaf	hot		24	0	0	10	10
+pool	hot	73	20	0	0	5	10
+pool	hot	74	10	0	0	5	10
+pool	hot	75	1	0	0	5	10
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "${lines[1]}" = *$'	#b22222' ]]
+  [[ "${lines[2]}" = *$'	#cc6f6f' ]]
+  [[ "${lines[3]}" = *$'	#e1abab' ]]
+}
