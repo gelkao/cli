@@ -156,3 +156,16 @@ ROWS
   [ "$status" -eq 0 ]
   [ "${lines[1]}" = $'pool\tleaf-a\t73\t1\t8.00\t8.00\t84.00\t84.00' ]
 }
+
+@test "colour_rects grades each leaf red, amber or green by its share of the fleet" {
+  run colour_rects <<RECTS
+leaf	hot		10	0	0	10	10
+leaf	warm		5	0	0	10	10
+leaf	cool		1	0	0	10	10
+leaf	rest		84	0	0	10	10
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "${lines[0]}" = *$'	#b22222' ]]
+  [[ "${lines[1]}" = *$'	#c77c0c' ]]
+  [[ "${lines[2]}" = *$'	#227a3f' ]]
+}
