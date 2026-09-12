@@ -41,8 +41,8 @@ CANVAS_BG='#fafaf9'
 RAG_RED='#b22222'
 RAG_AMBER='#c77c0c'
 RAG_GREEN='#227a3f'
-RED_SHARE=0.10
-AMBER_SHARE=0.05
+RED_VOLUMES=20
+AMBER_VOLUMES=10
 LEAF_GUTTER=10
 POOL_PAD=6
 
@@ -147,14 +147,13 @@ placement_rects() {
 
 colour_rects() {
   awk -F'\t' -v red="$RAG_RED" -v amber="$RAG_AMBER" -v green="$RAG_GREEN" \
-             -v red_share="$RED_SHARE" -v amber_share="$AMBER_SHARE" '
-    function graded(size) {
-      if (size >= red_share * fleet) return red
-      if (size >= amber_share * fleet) return amber
+             -v red_at="$RED_VOLUMES" -v amber_at="$AMBER_VOLUMES" '
+    function graded(volumes) {
+      if (volumes >= red_at) return red
+      if (volumes >= amber_at) return amber
       return green
     }
     { row[NR] = $0; level[NR] = $1; leaf[NR] = $2; size[NR] = $4 }
-    $1 == "leaf" { fleet += $4 }
     END {
       for (i = 1; i <= NR; i++) {
         if (level[i] == "leaf") colour[leaf[i]] = graded(size[i])
