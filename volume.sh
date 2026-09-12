@@ -38,7 +38,11 @@ volume_show() {
 CANVAS_W=1280
 CANVAS_H=800
 CANVAS_BG='#fafaf9'
-LEAF_FILL='#3f5c70'
+RAG_RED='#b22222'
+RAG_AMBER='#c77c0c'
+RAG_GREEN='#227a3f'
+RED_SHARE=0.10
+AMBER_SHARE=0.05
 LEAF_GUTTER=10
 POOL_PAD=6
 
@@ -141,14 +145,33 @@ placement_rects() {
   done < <(printf '%s\n' "$rows" | leaf_sizes | squarified_rects 0 0 "$width" "$height" | inset_rects "$LEAF_GUTTER")
 }
 
+colour_rects() {
+  awk -F'\t' -v red="$RAG_RED" -v amber="$RAG_AMBER" -v green="$RAG_GREEN" \
+             -v red_share="$RED_SHARE" -v amber_share="$AMBER_SHARE" '
+    function graded(size) {
+      if (size >= red_share * fleet) return red
+      if (size >= amber_share * fleet) return amber
+      return green
+    }
+    { row[NR] = $0; level[NR] = $1; leaf[NR] = $2; size[NR] = $4 }
+    $1 == "leaf" { fleet += $4 }
+    END {
+      for (i = 1; i <= NR; i++) {
+        if (level[i] == "leaf") colour[leaf[i]] = graded(size[i])
+        printf "%s\t%s\n", row[i], colour[leaf[i]]
+      }
+    }
+  '
+}
+
 rects_to_svg() {
   local width=$1 height=$2
-  awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" -v fill="$LEAF_FILL" '
+  awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" '
     BEGIN {
       printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\">", W, H
       printf "<rect width=\"%d\" height=\"%d\" fill=\"%s\"/>", W, H, bg
     }
-    { printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, fill, bg }
+    { printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, $9, bg }
     END { print "</svg>" }
   '
 }
@@ -167,6 +190,7 @@ volume_draw() {
   [[ -n "$rows" ]] || die "no placement rows on stdin - pipe in the table Hetzner support sent you"
   printf '%s\n' "$rows" \
     | placement_rects "$CANVAS_W" "$CANVAS_H" \
+    | colour_rects \
     | rects_to_svg "$CANVAS_W" "$CANVAS_H" \
     | svg_to_webp "$out"
   info 2 "wrote $out"
