@@ -38,11 +38,13 @@ volume_show() {
 CANVAS_W=1280
 CANVAS_H=800
 CANVAS_BG='#fafaf9'
-RAG_RED='#b22222'
-RAG_AMBER='#c77c0c'
-RAG_GREEN='#227a3f'
+RAG_RED='178 34 34'
+RAG_AMBER='199 124 12'
+RAG_GREEN='34 122 63'
 RED_VOLUMES=20
 AMBER_VOLUMES=10
+POOL_SHADE_AMBER=0.35
+POOL_SHADE_GREEN=0.62
 LEAF_GUTTER=10
 POOL_PAD=6
 
@@ -147,17 +149,29 @@ placement_rects() {
 
 colour_rects() {
   awk -F'\t' -v red="$RAG_RED" -v amber="$RAG_AMBER" -v green="$RAG_GREEN" \
-             -v red_at="$RED_VOLUMES" -v amber_at="$AMBER_VOLUMES" '
+             -v red_at="$RED_VOLUMES" -v amber_at="$AMBER_VOLUMES" \
+             -v shade_amber="$POOL_SHADE_AMBER" -v shade_green="$POOL_SHADE_GREEN" '
     function graded(volumes) {
       if (volumes >= red_at) return red
       if (volumes >= amber_at) return amber
       return green
     }
+    function lightened(rgb, amount,   channel, i, hex) {
+      split(rgb, channel, " ")
+      hex = "#"
+      for (i = 1; i <= 3; i++) hex = hex sprintf("%02x", int(channel[i] + (255 - channel[i]) * amount))
+      return hex
+    }
+    function shade(volumes) {
+      if (volumes >= red_at) return 0
+      if (volumes >= amber_at) return shade_amber
+      return shade_green
+    }
     { row[NR] = $0; level[NR] = $1; leaf[NR] = $2; size[NR] = $4 }
     END {
       for (i = 1; i <= NR; i++) {
-        if (level[i] == "leaf") colour[leaf[i]] = graded(size[i])
-        printf "%s\t%s\n", row[i], colour[leaf[i]]
+        if (level[i] == "leaf") base[leaf[i]] = graded(size[i])
+        printf "%s\t%s\n", row[i], lightened(base[leaf[i]], level[i] == "leaf" ? 0 : shade(size[i]))
       }
     }
   '
