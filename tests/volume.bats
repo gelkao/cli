@@ -190,3 +190,11 @@ RECTS
   [ "$status" -eq 0 ]
   [[ "${lines[1]}" = *$'	#227a3f' ]]
 }
+
+@test "rects_to_svg labels each leaf block with its name and volume count" {
+  run rects_to_svg 400 400 <<RECTS
+leaf	fsn1-leaf9		24	0	0	400	400	#b22222
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "$output" = *">fsn1-leaf9 (24)<"* ]]
+}

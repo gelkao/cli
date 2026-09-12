@@ -46,6 +46,9 @@ AMBER_VOLUMES=2
 POOL_SHADE_AMBER=0.35
 POOL_SHADE_GREEN=0.62
 LEAF_GUTTER=10
+LABEL_SIZE=13
+LABEL_ADVANCE=0.50
+LABEL_INK='#ffffff'
 
 leaf_sizes() {
   awk -F'\t' '
@@ -173,13 +176,34 @@ colour_rects() {
 
 rects_to_svg() {
   local width=$1 height=$2
-  awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" '
+  awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" \
+             -v size="$LABEL_SIZE" -v advance="$LABEL_ADVANCE" -v ink="$LABEL_INK" '
+    function label_of(name, volumes) { return sprintf("%s (%d)", name, volumes) }
+    function label_width(text) { return length(text) * size * advance }
+    function fits(text, w, h) { return w >= label_width(text) + size && h >= size * 2 }
+    function draw_label(text, x, y, colour,   pad) {
+      pad = size / 2
+      printf "<rect x=\"%s\" y=\"%s\" width=\"%.1f\" height=\"%.1f\" fill=\"%s\"/>", \
+             x, y, label_width(text) + pad * 2, size * 1.5, colour
+      printf "<text x=\"%.1f\" y=\"%.1f\" font-family=\"Helvetica,Arial,sans-serif\" font-size=\"%d\" font-weight=\"bold\" fill=\"%s\">%s</text>", \
+             x + pad, y + size * 1.1, size, ink, text
+    }
     BEGIN {
       printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\">", W, H
       printf "<rect width=\"%d\" height=\"%d\" fill=\"%s\"/>", W, H, bg
     }
-    { printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, $9, bg }
-    END { print "</svg>" }
+    {
+      printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, $9, bg
+      if ($1 == "leaf") { labelled[++pending] = $0 }
+    }
+    END {
+      for (i = 1; i <= pending; i++) {
+        split(labelled[i], f, "\t")
+        text = label_of(f[2], f[4])
+        if (fits(text, f[7], f[8])) draw_label(text, f[5], f[6], f[9])
+      }
+      print "</svg>"
+    }
   '
 }
 
