@@ -240,7 +240,12 @@ svg_to_webp() {
 }
 
 volume_draw() {
-  local assets=$1 out=$2 rows
+  local assets=$1 out=$2 tolerance=${3:-} rows
+  if [[ -n "$tolerance" ]]; then
+    [[ "$tolerance" =~ ^[0-9]+$ ]] || die "-t needs a whole number of volumes, got: $tolerance"
+    [[ "$tolerance" -ge "$AMBER_VOLUMES" ]] || die "-t must be at least $AMBER_VOLUMES, or every leaf is red"
+    RED_VOLUMES=$tolerance
+  fi
   require_rsvg
   require_cwebp
   rows=$(placement_rows_ranked "$assets")

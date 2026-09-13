@@ -255,3 +255,17 @@ RECTS
   [ "$status" -eq 0 ]
   [[ "$output" = *'font-size="10" fill="#ffffff"'* ]]
 }
+
+@test "gelkao volume draw takes the tolerance from -t" {
+  command -v rsvg-convert >/dev/null && command -v cwebp >/dev/null \
+    || skip "needs rsvg-convert and cwebp"
+  local rows="$BATS_TEST_TMPDIR/rows.txt"
+  printf 'volume id\tvolume pool id\tleaf\n' > "$rows"
+  for id in 1 2 3 4 5; do printf '%d\t7\tleaf-a\n' "$id" >> "$rows"; done
+  run bash -c "'$ROOT/gelkao' volume draw -t 20 -o '$BATS_TEST_TMPDIR/loose.webp' < '$rows'"
+  [ "$status" -eq 0 ]
+  run bash -c "'$ROOT/gelkao' volume draw -t 5 -o '$BATS_TEST_TMPDIR/strict.webp' < '$rows'"
+  [ "$status" -eq 0 ]
+  run cmp -s "$BATS_TEST_TMPDIR/loose.webp" "$BATS_TEST_TMPDIR/strict.webp"
+  [ "$status" -ne 0 ]
+}

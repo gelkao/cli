@@ -29,9 +29,12 @@ Usage:
   cat volumes.txt | gelkao volume show
                                      draw the leaf / volume pool / volume tree from the
                                      placement table Hetzner support sends you
-  cat volumes.txt | gelkao volume draw [-o <path>]
+  cat volumes.txt | gelkao volume draw [-o <path>] [-t <volumes>]
                                      render the same placement as a treemap webp
                                      (default: data/volumes.webp)
+
+  -t <volumes>     how many volumes you can afford to lose at once; a leaf or
+                   volume group holding that many is drawn red (default: 20)
 
 The customer number is read from the invoice page itself — there is nothing to type.
 EOF
@@ -95,10 +98,11 @@ volume_cmd() {
   local verb=${1-}
   [[ -n "$verb" ]] || die "volume needs a subcommand: show or draw"
   shift
-  local OPTIND out=""
-  while getopts ":o:h" opt; do
+  local OPTIND out="" tolerance=""
+  while getopts ":o:t:h" opt; do
     case "$opt" in
       o) out=$OPTARG ;;
+      t) tolerance=$OPTARG ;;
       h) usage; exit 0 ;;
       :) die "option -$OPTARG requires a value" ;;
       \?) die "unknown option: -$OPTARG" ;;
@@ -107,8 +111,9 @@ volume_cmd() {
   shift $((OPTIND - 1))
   [[ $# -eq 0 ]] || die "unexpected argument: $1"
   case "$verb" in
-    show) [[ -z "$out" ]] || die "-o is not valid for show"; volume_show "$here" ;;
-    draw) volume_draw "$here" "${out:-$DEFAULT_DRAW_PATH}" ;;
+    show) [[ -z "$out" ]] || die "-o is not valid for show"
+          [[ -z "$tolerance" ]] || die "-t is not valid for show"; volume_show "$here" ;;
+    draw) volume_draw "$here" "${out:-$DEFAULT_DRAW_PATH}" "$tolerance" ;;
     *)    die "unknown volume subcommand: $verb - try show or draw" ;;
   esac
 }
