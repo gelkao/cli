@@ -179,7 +179,7 @@ RECTS
   [ "$status" -eq 0 ]
   [[ "${lines[1]}" = *$'	#b22222	'* ]]
   [[ "${lines[2]}" = *$'	#cc6f6f	'* ]]
-  [[ "${lines[3]}" = *$'	#e1abab	'* ]]
+  [[ "${lines[3]}" = *$'	#f3dddd	'* ]]
 }
 
 @test "colour_rects draws a green block solid, since its pools can never differ" {
@@ -226,5 +226,5 @@ pool	hot	74	1	0	0	5	10
 RECTS
   [ "$status" -eq 0 ]
   [[ "${lines[1]}" = *$'	#b22222	#ffffff' ]]
-  [[ "${lines[2]}" = *$'	#e1abab	#3a3a3a' ]]
+  [[ "${lines[2]}" = *$'	#f3dddd	#3a3a3a' ]]
 }

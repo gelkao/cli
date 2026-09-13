@@ -43,8 +43,8 @@ RAG_AMBER='199 124 12'
 RAG_GREEN='34 122 63'
 RED_VOLUMES=20
 AMBER_VOLUMES=2
-POOL_SHADE_AMBER=0.35
-POOL_SHADE_GREEN=0.62
+POOL_LIGHTEN_AMBER=0.35
+POOL_LIGHTEN_GREEN=0.85
 LEAF_GUTTER=10
 LABEL_SIZE=13
 LABEL_ADVANCE=0.50
@@ -149,7 +149,7 @@ placement_rects() {
 colour_rects() {
   awk -F'\t' -v red="$RAG_RED" -v amber="$RAG_AMBER" -v green="$RAG_GREEN" \
              -v red_at="$RED_VOLUMES" -v amber_at="$AMBER_VOLUMES" \
-             -v shade_amber="$POOL_SHADE_AMBER" -v shade_green="$POOL_SHADE_GREEN" \
+             -v lighten_amber="$POOL_LIGHTEN_AMBER" -v lighten_green="$POOL_LIGHTEN_GREEN" \
              -v on_dark="$INK_ON_DARK" -v on_light="$INK_ON_LIGHT" '
     function graded(volumes) {
       if (volumes >= red_at) return red
@@ -165,8 +165,8 @@ colour_rects() {
     function shade(leaf_volumes, pool_volumes) {
       if (leaf_volumes < amber_at) return 0
       if (pool_volumes >= red_at) return 0
-      if (pool_volumes >= amber_at) return shade_amber
-      return shade_green
+      if (pool_volumes >= amber_at) return lighten_amber
+      return lighten_green
     }
     { row[NR] = $0; level[NR] = $1; leaf[NR] = $2; size[NR] = $4 }
     END {
