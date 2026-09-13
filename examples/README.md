@@ -28,7 +28,8 @@ the map can draw.
 
 Two bookends sit next to it, same 199 volumes:
 
-| file                          | fleet | picture |
-|-------------------------------|---|---|
-| `example-volumes-perfect.tsv` | every volume alone on its own leaf and pool | 199 green squares |
-| `example-volumes-worst.tsv`   | every volume on one leaf in one pool | a single red block |
+| file                             | fleet | picture |
+|----------------------------------|---|---|
+| `example-volumes-perfect.tsv`    | every volume alone on its own leaf and pool | 199 green squares |
+| `example-volumes-worst.tsv`      | every volume on one leaf in one pool | a single red block |
+| `example-volumes-real-fleet.tsv` | a real 199-volume fleet's structure, untouched | 6 red, 22 amber, 8 green |
