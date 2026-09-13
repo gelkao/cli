@@ -25,3 +25,10 @@ A synthetic placement table in the format Hetzner support mails you
 fleet so the map looks like something you would actually get; every identifier
 is invented. The largest leaf is arranged so the example generates every colour
 the map can draw.
+
+Two bookends sit next to it, same 199 volumes:
+
+| file                          | fleet | picture |
+|-------------------------------|---|---|
+| `example-volumes-perfect.tsv` | every volume alone on its own leaf and pool | 199 green squares |
+| `example-volumes-worst.tsv`   | every volume on one leaf in one pool | a single red block |
