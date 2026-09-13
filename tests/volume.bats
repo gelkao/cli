@@ -164,9 +164,9 @@ leaf	warm		2	0	0	10	10
 leaf	cool		1	0	0	10	10
 RECTS
   [ "$status" -eq 0 ]
-  [[ "${lines[0]}" = *$'	#b22222' ]]
-  [[ "${lines[1]}" = *$'	#c77c0c' ]]
-  [[ "${lines[2]}" = *$'	#227a3f' ]]
+  [[ "${lines[0]}" = *$'	#b22222	'* ]]
+  [[ "${lines[1]}" = *$'	#c77c0c	'* ]]
+  [[ "${lines[2]}" = *$'	#227a3f	'* ]]
 }
 
 @test "colour_rects bands each pool on the same rule as its leaf" {
@@ -177,9 +177,9 @@ pool	hot	74	10	0	0	5	10
 pool	hot	75	1	0	0	5	10
 RECTS
   [ "$status" -eq 0 ]
-  [[ "${lines[1]}" = *$'	#b22222' ]]
-  [[ "${lines[2]}" = *$'	#cc6f6f' ]]
-  [[ "${lines[3]}" = *$'	#e1abab' ]]
+  [[ "${lines[1]}" = *$'	#b22222	'* ]]
+  [[ "${lines[2]}" = *$'	#cc6f6f	'* ]]
+  [[ "${lines[3]}" = *$'	#e1abab	'* ]]
 }
 
 @test "colour_rects draws a green block solid, since its pools can never differ" {
@@ -188,15 +188,15 @@ leaf	cool		1	0	0	10	10
 pool	cool	73	1	0	0	10	10
 RECTS
   [ "$status" -eq 0 ]
-  [[ "${lines[1]}" = *$'	#227a3f' ]]
+  [[ "${lines[1]}" = *$'	#227a3f	'* ]]
 }
 
-@test "rects_to_svg labels each leaf block with its name and volume count" {
+@test "rects_to_svg labels each leaf block with its name" {
   run rects_to_svg 400 400 <<RECTS
 leaf	fsn1-leaf9		24	0	0	400	400	#b22222
 RECTS
   [ "$status" -eq 0 ]
-  [[ "$output" = *">fsn1-leaf9 (24)<"* ]]
+  [[ "$output" = *">fsn1-leaf9<"* ]]
 }
 
 @test "rects_to_svg shortens the leaf name to region letter, cloud and leaf number" {
@@ -204,5 +204,27 @@ RECTS
 leaf	fsn1-cloud2-leaf39		24	0	0	400	400	#b22222
 RECTS
   [ "$status" -eq 0 ]
-  [[ "$output" = *">f-2-39 (24)<"* ]]
+  [[ "$output" = *">f-2-39<"* ]]
+}
+
+@test "rects_to_svg labels each volume group with its id" {
+  run rects_to_svg 400 400 <<RECTS
+leaf	fsn1-cloud2-leaf39		24	0	0	400	400	#b22222
+pool	fsn1-cloud2-leaf39	173	15	0	0	400	200	#b22222
+pool	fsn1-cloud2-leaf39	170	9	0	200	400	200	#cc6f6f
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "$output" = *">#173<"* ]]
+  [[ "$output" = *">#170<"* ]]
+}
+
+@test "colour_rects names an ink that stays legible on each fill" {
+  run colour_rects <<RECTS
+leaf	hot		24	0	0	10	10
+pool	hot	73	20	0	0	5	10
+pool	hot	74	1	0	0	5	10
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "${lines[1]}" = *$'	#b22222	#ffffff' ]]
+  [[ "${lines[2]}" = *$'	#e1abab	#3a3a3a' ]]
 }
