@@ -219,7 +219,7 @@ rects_to_svg() {
     END {
       for (i = 1; i <= pending; i++) {
         split(row[i], f, "\t")
-        if (f[1] == "pool") draw_id("#" f[3], f[5], f[6], f[7], f[8], f[10])
+        if (f[1] == "pool") draw_id(f[3], f[5], f[6], f[7], f[8], f[10])
       }
       for (i = 1; i <= pending; i++) {
         split(row[i], f, "\t")

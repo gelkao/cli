@@ -214,8 +214,8 @@ pool	fsn1-cloud2-leaf39	173	15	0	0	400	200	#b22222
 pool	fsn1-cloud2-leaf39	170	9	0	200	400	200	#cc6f6f
 RECTS
   [ "$status" -eq 0 ]
-  [[ "$output" = *">#173<"* ]]
-  [[ "$output" = *">#170<"* ]]
+  [[ "$output" = *">173<"* ]]
+  [[ "$output" = *">170<"* ]]
 }
 
 @test "colour_rects names an ink that stays legible on each fill" {
@@ -241,10 +241,10 @@ RECTS
 @test "rects_to_svg turns a volume group id sideways when its tile is tall and narrow" {
   run rects_to_svg 400 400 <<RECTS
 leaf	fsn1-cloud2-leaf41		15	0	0	400	400	#c77c0c	#ffffff
-pool	fsn1-cloud2-leaf41	37	1	0	0	23	209	#f6ebda	#3a3a3a
+pool	fsn1-cloud2-leaf41	219	1	0	0	18	209	#f6ebda	#3a3a3a
 RECTS
   [ "$status" -eq 0 ]
-  [[ "$output" = *"rotate(-90"*">#37<"* ]]
+  [[ "$output" = *"rotate(-90"*">219<"* ]]
 }
 
 @test "rects_to_svg inks a volume group id with the colour named for its fill" {
