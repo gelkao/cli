@@ -49,6 +49,9 @@ LEAF_GUTTER=10
 LABEL_SIZE=13
 LABEL_ADVANCE=0.50
 LABEL_INK='#ffffff'
+POOL_LABEL_SIZE=10
+INK_ON_DARK='#ffffff'
+INK_ON_LIGHT='#3a3a3a'
 
 leaf_sizes() {
   awk -F'\t' '
@@ -146,7 +149,8 @@ placement_rects() {
 colour_rects() {
   awk -F'\t' -v red="$RAG_RED" -v amber="$RAG_AMBER" -v green="$RAG_GREEN" \
              -v red_at="$RED_VOLUMES" -v amber_at="$AMBER_VOLUMES" \
-             -v shade_amber="$POOL_SHADE_AMBER" -v shade_green="$POOL_SHADE_GREEN" '
+             -v shade_amber="$POOL_SHADE_AMBER" -v shade_green="$POOL_SHADE_GREEN" \
+             -v on_dark="$INK_ON_DARK" -v on_light="$INK_ON_LIGHT" '
     function graded(volumes) {
       if (volumes >= red_at) return red
       if (volumes >= amber_at) return amber
@@ -168,7 +172,8 @@ colour_rects() {
     END {
       for (i = 1; i <= NR; i++) {
         if (level[i] == "leaf") { base[leaf[i]] = graded(size[i]); leaf_volumes[leaf[i]] = size[i] }
-        printf "%s\t%s\n", row[i], lightened(base[leaf[i]], level[i] == "leaf" ? 0 : shade(leaf_volumes[leaf[i]], size[i]))
+        amount = (level[i] == "leaf" ? 0 : shade(leaf_volumes[leaf[i]], size[i]))
+        printf "%s\t%s\t%s\n", row[i], lightened(base[leaf[i]], amount), (amount > 0 ? on_light : on_dark)
       }
     }
   '
@@ -177,14 +182,15 @@ colour_rects() {
 rects_to_svg() {
   local width=$1 height=$2
   awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" \
-             -v size="$LABEL_SIZE" -v advance="$LABEL_ADVANCE" -v ink="$LABEL_INK" '
+             -v size="$LABEL_SIZE" -v advance="$LABEL_ADVANCE" -v ink="$LABEL_INK" \
+             -v pool_size="$POOL_LABEL_SIZE" '
     function short_name(name,   cloud, leaf) {
       if (name !~ /cloud[0-9]+-leaf[0-9]+$/) return name
       cloud = name; sub(/^.*cloud/, "", cloud); sub(/-leaf.*$/, "", cloud)
       leaf = name; sub(/^.*-leaf/, "", leaf)
       return substr(name, 1, 1) "-" cloud "-" leaf
     }
-    function label_of(name, volumes) { return sprintf("%s (%d)", short_name(name), volumes) }
+    function label_of(name) { return short_name(name) }
     function label_width(text) { return length(text) * size * advance }
     function fits(text, w, h) { return w >= label_width(text) + size && h >= size * 2 }
     function draw_label(text, x, y, colour,   pad) {
@@ -198,14 +204,24 @@ rects_to_svg() {
       printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\">", W, H
       printf "<rect width=\"%d\" height=\"%d\" fill=\"%s\"/>", W, H, bg
     }
+    function draw_id(text, x, y, w, h, pool_ink) {
+      if (w < length(text) * pool_size * advance + pool_size || h < pool_size * 1.6) return
+      printf "<text x=\"%.1f\" y=\"%.1f\" font-family=\"Helvetica,Arial,sans-serif\" font-size=\"%d\" fill=\"%s\">%s</text>", \
+             x + pool_size / 2, y + h - pool_size * 0.5, pool_size, pool_ink, text
+    }
     {
       printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, $9, bg
-      if ($1 == "leaf") { labelled[++pending] = $0 }
+      row[++pending] = $0
     }
     END {
       for (i = 1; i <= pending; i++) {
-        split(labelled[i], f, "\t")
-        text = label_of(f[2], f[4])
+        split(row[i], f, "\t")
+        if (f[1] == "pool") draw_id("#" f[3], f[5], f[6], f[7], f[8], f[10])
+      }
+      for (i = 1; i <= pending; i++) {
+        split(row[i], f, "\t")
+        if (f[1] != "leaf") continue
+        text = label_of(f[2])
         if (fits(text, f[7], f[8])) draw_label(text, f[5], f[6], f[9])
       }
       print "</svg>"
