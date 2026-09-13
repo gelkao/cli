@@ -198,3 +198,11 @@ RECTS
   [ "$status" -eq 0 ]
   [[ "$output" = *">fsn1-leaf9 (24)<"* ]]
 }
+
+@test "rects_to_svg shortens the leaf name to region letter, cloud and leaf number" {
+  run rects_to_svg 400 400 <<RECTS
+leaf	fsn1-cloud2-leaf39		24	0	0	400	400	#b22222
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "$output" = *">f-2-39 (24)<"* ]]
+}
