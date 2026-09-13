@@ -237,3 +237,21 @@ RECTS
   [ "$status" -eq 0 ]
   [[ "$output" = *'fill="#3a3a3a">f-2-39<'* ]]
 }
+
+@test "rects_to_svg turns a volume group id sideways when its tile is tall and narrow" {
+  run rects_to_svg 400 400 <<RECTS
+leaf	fsn1-cloud2-leaf41		15	0	0	400	400	#c77c0c	#ffffff
+pool	fsn1-cloud2-leaf41	37	1	0	0	23	209	#f6ebda	#3a3a3a
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "$output" = *"rotate(-90"*">#37<"* ]]
+}
+
+@test "rects_to_svg inks a volume group id with the colour named for its fill" {
+  run rects_to_svg 400 400 <<RECTS
+leaf	fsn1-cloud2-leaf41		2	0	0	400	400	#227a3f	#ffffff
+pool	fsn1-cloud2-leaf41	219	2	0	0	400	400	#227a3f	#ffffff
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "$output" = *'font-size="10" fill="#ffffff"'* ]]
+}

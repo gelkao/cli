@@ -200,10 +200,17 @@ rects_to_svg() {
       printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"%d\" height=\"%d\">", W, H
       printf "<rect width=\"%d\" height=\"%d\" fill=\"%s\"/>", W, H, bg
     }
-    function draw_id(text, x, y, w, h, pool_ink) {
-      if (w < length(text) * pool_size * advance + pool_size || h < pool_size * 1.6) return
-      printf "<text x=\"%.1f\" y=\"%.1f\" font-family=\"Helvetica,Arial,sans-serif\" font-size=\"%d\" fill=\"%s\">%s</text>", \
-             x + pool_size / 2, y + h - pool_size * 0.5, pool_size, pool_ink, text
+    function id_face(ink) { return sprintf("font-family=\"Helvetica,Arial,sans-serif\" font-size=\"%d\" fill=\"%s\"", pool_size, ink) }
+    function draw_id(text, x, y, w, h, pool_ink,   run, cx, cy) {
+      run = length(text) * pool_size * advance + pool_size
+      if (w >= run && h >= pool_size * 1.6) {
+        printf "<text x=\"%.1f\" y=\"%.1f\" %s>%s</text>", \
+               x + pool_size / 2, y + h - pool_size * 0.5, id_face(pool_ink), text
+      } else if (h >= run && w >= pool_size * 1.6) {
+        cx = x + pool_size; cy = y + h - pool_size / 2
+        printf "<text x=\"%.1f\" y=\"%.1f\" transform=\"rotate(-90 %.1f %.1f)\" %s>%s</text>", \
+               cx, cy, cx, cy, id_face(pool_ink), text
+      }
     }
     {
       printf "<rect x=\"%s\" y=\"%s\" width=\"%s\" height=\"%s\" fill=\"%s\" stroke=\"%s\"/>", $5, $6, $7, $8, $9, bg
