@@ -228,3 +228,12 @@ RECTS
   [[ "${lines[1]}" = *$'	#b22222	#ffffff' ]]
   [[ "${lines[2]}" = *$'	#f3dddd	#3a3a3a' ]]
 }
+
+@test "rects_to_svg inks the leaf label to suit the pool beneath it" {
+  run rects_to_svg 400 400 <<RECTS
+leaf	fsn1-cloud2-leaf39		1	0	0	400	400	#c77c0c	#ffffff
+pool	fsn1-cloud2-leaf39	45	1	0	0	400	400	#f6ebda	#3a3a3a
+RECTS
+  [ "$status" -eq 0 ]
+  [[ "$output" = *'fill="#3a3a3a">f-2-39<'* ]]
+}
