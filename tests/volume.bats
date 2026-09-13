@@ -159,8 +159,8 @@ ROWS
 
 @test "colour_rects grades each leaf red, amber or green by how many volumes it carries" {
   run colour_rects <<RECTS
-leaf	hot		20	0	0	10	10
-leaf	warm		2	0	0	10	10
+leaf	hot		10	0	0	10	10
+leaf	warm		9	0	0	10	10
 leaf	cool		1	0	0	10	10
 RECTS
   [ "$status" -eq 0 ]
@@ -172,8 +172,8 @@ RECTS
 @test "colour_rects bands each pool on the same rule as its leaf" {
   run colour_rects <<RECTS
 leaf	hot		24	0	0	10	10
-pool	hot	73	20	0	0	5	10
-pool	hot	74	10	0	0	5	10
+pool	hot	73	10	0	0	5	10
+pool	hot	74	5	0	0	5	10
 pool	hot	75	1	0	0	5	10
 RECTS
   [ "$status" -eq 0 ]
