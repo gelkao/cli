@@ -178,7 +178,13 @@ rects_to_svg() {
   local width=$1 height=$2
   awk -F'\t' -v W="$width" -v H="$height" -v bg="$CANVAS_BG" \
              -v size="$LABEL_SIZE" -v advance="$LABEL_ADVANCE" -v ink="$LABEL_INK" '
-    function label_of(name, volumes) { return sprintf("%s (%d)", name, volumes) }
+    function short_name(name,   cloud, leaf) {
+      if (name !~ /cloud[0-9]+-leaf[0-9]+$/) return name
+      cloud = name; sub(/^.*cloud/, "", cloud); sub(/-leaf.*$/, "", cloud)
+      leaf = name; sub(/^.*-leaf/, "", leaf)
+      return substr(name, 1, 1) "-" cloud "-" leaf
+    }
+    function label_of(name, volumes) { return sprintf("%s (%d)", short_name(name), volumes) }
     function label_width(text) { return length(text) * size * advance }
     function fits(text, w, h) { return w >= label_width(text) + size && h >= size * 2 }
     function draw_label(text, x, y, colour,   pad) {
