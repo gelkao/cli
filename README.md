@@ -13,6 +13,9 @@ hast, rechnet auf deinem Rechner und ist fertig. Grep durch den Quellcode und
 
 **Fragen? [Discussions](https://github.com/gelkao/cli/discussions) oder [private Nachricht im Hetzner-Forum](https://forum.hetzner.com/wcf/index.php?conversation-add/&userID=41011).**
 
+[Website](https://gelkao.com) |
+[Dokumentation](https://gelkao.com/docs/latest/)
+
 | Befehl | Frage | Handbuch |
 |---|---|---|
 | `gelkao volume` | Was fällt gemeinsam aus? | [gelkao volume](https://gelkao.com/docs/latest/volume/) |
@@ -58,12 +61,6 @@ Dann lass es auf deine eigene Rechnung los.
 <p align="center">🟥 ≥ 50 % · 🟧 20–49 % · 🟩 unter 20 %</p>
 
 Für Power-User: `cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch && ./gelkao invoice audit`
-
-## Dokumentation
-
-Das vollständige Handbuch steht auf [gelkao.com/docs/latest](https://gelkao.com/docs/latest/) -
-[gelkao volume](https://gelkao.com/docs/latest/volume/) und
-[gelkao invoice](https://gelkao.com/docs/latest/invoice/).
 
 ## Beispiel aus der Praxis
 
