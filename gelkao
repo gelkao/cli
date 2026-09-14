@@ -46,6 +46,8 @@ banner() {
   printf '\n%sCloud Inefficiency Audit%s · %shttps://gelkao.com%s\n\n' "$b" "$r" "$u" "$r" >&2
 }
 
+wants_usage() { [[ "${1-}" = "-h" || "${1-}" = "--help" ]]; }
+
 cmd_list() { list_invoices "$@"; }
 
 cmd_fetch() { fetch_all "$1"; }
@@ -62,6 +64,7 @@ cmd_audit() {
 
 invoice_cmd() {
   local verb=${1-}
+  wants_usage "$verb" && { usage; exit 0; }
   [[ -n "$verb" ]] || die "invoice needs a subcommand: list, fetch or audit"
   shift
   local from_stdin='' arg
@@ -96,6 +99,7 @@ invoice_cmd() {
 
 volume_cmd() {
   local verb=${1-}
+  wants_usage "$verb" && { usage; exit 0; }
   [[ -n "$verb" ]] || die "volume needs a subcommand: show or draw"
   shift
   local OPTIND out="" tolerance=""

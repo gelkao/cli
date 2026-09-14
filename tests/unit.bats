@@ -148,6 +148,12 @@ HTML
   [[ "$output" == *"skip"* ]]
 }
 
+@test "gelkao invoice -h prints the usage instead of reading -h as a subcommand" {
+  run "$ROOT/gelkao" invoice -h
+  [ "$status" -eq 0 ]
+  [[ "$output" = Usage:* ]]
+}
+
 @test "gelkao invoice -d is rejected for list" {
   run "$ROOT/gelkao" invoice list -d /tmp
   [ "$status" -ne 0 ]
