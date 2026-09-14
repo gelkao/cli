@@ -16,10 +16,12 @@ hast, rechnet auf deinem Rechner und ist fertig. Grep durch den Quellcode und
 [Website](https://gelkao.com) |
 [Dokumentation](https://gelkao.com/docs/latest/)
 
-| Befehl | Frage | Handbuch |
-|---|---|---|
-| `gelkao volume` | Was fällt gemeinsam aus? | [gelkao volume](https://gelkao.com/docs/latest/volume/) |
-| `gelkao invoice` | Was zahlst du zu viel? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) |
+## Befehle
+
+| Befehl | Frage |
+|---|---|
+| [`gelkao volume`](https://gelkao.com/docs/latest/volume/) | Was fällt gemeinsam aus? |
+| [`gelkao invoice`](https://gelkao.com/docs/latest/invoice/) | Was zahlst du zu viel? |
 
 ## Schnellstart
 
