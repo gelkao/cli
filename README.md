@@ -2,14 +2,14 @@
 
 # gelkao CLI
 
+[![CI](https://github.com/gelkao/cli/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gelkao/cli/actions/workflows/ci.yml)
+[![integration](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74/raw/gelkao-cli-integration.json)](https://gist.github.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74)
+
 **Ein Schweizer Zero-Trust-Taschenmesser für alles, was Hetzner dir über deinen Account nicht verrät.**
 
 Kein Account, kein Login, nichts wird hochgeladen - es liest, was du ohnehin schon
 hast, rechnet auf deinem Rechner und ist fertig. Grep durch den Quellcode und
 überzeug dich selbst.
-
-[![CI](https://github.com/gelkao/cli/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gelkao/cli/actions/workflows/ci.yml)
-[![integration](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74/raw/gelkao-cli-integration.json)](https://gist.github.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74)
 
 **Fragen? [Discussions](https://github.com/gelkao/cli/discussions) oder [private Nachricht im Hetzner-Forum](https://forum.hetzner.com/wcf/index.php?conversation-add/&userID=41011).**
 
