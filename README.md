@@ -1,17 +1,24 @@
 🇬🇧 [English](README.en.md) | 🇩🇪 Deutsch
 
-# Cloud Inefficiency Audit
+# gelkao CLI
 
-**Weil die Welt nicht noch ein Cloud-Dashboard braucht.**
+**Ein Schweizer Zero-Trust-Taschenmesser für alles, was Hetzner dir über deinen Account nicht verrät.**
 
-Also ist es keins. Kein Account, kein Login, nichts wird hochgeladen – es liest
-Rechnungen, die du ohnehin schon hast, zeigt dir, wie viel du zu viel bezahlt
-hast, und ist fertig. Grep durch den Quellcode und überzeug dich selbst.
+Kein Account, kein Login, nichts wird hochgeladen - es liest, was du ohnehin schon
+hast, rechnet auf deinem Rechner und ist fertig. Grep durch den Quellcode und
+überzeug dich selbst.
 
 [![CI](https://github.com/gelkao/cli/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gelkao/cli/actions/workflows/ci.yml)
 [![integration](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74/raw/gelkao-cli-integration.json)](https://gist.github.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74)
 
+| Befehl | Frage | Handbuch |
+|---|---|---|
+| `gelkao invoice` | Was zahlst du zu viel? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) |
+| `gelkao volume` | Was fällt gemeinsam aus? | [gelkao volume](https://gelkao.com/docs/latest/volume/) |
+
 ## Schnellstart
+
+### gelkao invoice
 
 Probier es erst ohne Account aus – das Repo bringt eine kleine synthetische
 Server-Flotte mit, die du direkt nach dem Klonen auditieren kannst:
@@ -35,11 +42,36 @@ Dann lass es auf deine eigene Rechnung los.
 
 Für Power-User: `cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch && ./gelkao invoice audit`
 
+### gelkao volume
+
+Die Platzierungstabelle, die dir der Hetzner-Support auf Anfrage schickt, sagt dir,
+welche deiner Volumes am selben Netzwerk-Switch hängen. Auch dafür liegt ein
+Beispiel im Repo:
+
+```
+./gelkao volume show < examples/example-volumes-real-fleet.tsv
+./gelkao volume draw < examples/example-volumes-real-fleet.tsv
+```
+
+<p align="center"><img src="img/volume-demo.webp" alt="Beispielausgabe von gelkao volume draw"></p>
+
+<p align="center">🟥 zu viele Volumes auf einem Leaf · 🟧 Achtung · 🟩 unkritisch</p>
+
+## Dokumentation
+
+Das vollständige Handbuch steht auf [gelkao.com/docs/latest](https://gelkao.com/docs/latest/) -
+[gelkao invoice](https://gelkao.com/docs/latest/invoice/) und
+[gelkao volume](https://gelkao.com/docs/latest/volume/).
+
 ## Beispiel aus der Praxis
 
 [Du bist wahrscheinlich auf der falschen Cloud-Box](https://gelkao.com/blog/how-cost-efficient-is-mytimeplan-com-cloud/) (englisch)
 ist eine Fallstudie über die echte Hetzner-Flotte von [mytimeplan.com](https://mytimeplan.com).
 Exakte Zahlen: 14 Monate, 193 Server, 1.878 €/Monat, **23 % zu viel gezahlt.**
+
+[Kann man auf der Hetzner Cloud ein ausfallsicheres System mit kleinem Budget bauen?](https://gelkao.com/blog/is-it-possible-to-build-fault-tolerant-budget-system-on-hetzner-cloud/)
+kartiert eine echte Flotte mit 199 Volumes: sechs Switches tragen mehr als die
+Hälfte davon, einer davon allein 24.
 
 ## Teile dein Ergebnis
 
@@ -49,9 +81,10 @@ Audit durchgelaufen? Poste dein Ergebnis in den [Discussions](https://github.com
 
 `gelkao` ist ein kleines Shell-Tool mit ein paar Standard-Abhängigkeiten:
 
-- **bash** 3.2+ – die mitgelieferte bash von macOS reicht.
-- **sqlite3** 3.8.3+ – die Audit-Engine.
-- **curl** – um Rechnungen herunterzuladen (`fetch`) und, falls du die optionale Preisaktualisierung zulässt, die Preistabellen; lehnst du die Abfrage ab oder übergibst `-q`, bleibt das Audit vollständig offline.
+- **bash** 3.2+ - die mitgelieferte bash von macOS reicht.
+- **sqlite3** 3.8.3+ - die Audit-Engine.
+- **curl** - um Rechnungen herunterzuladen (`fetch`) und, falls du die optionale Preisaktualisierung zulässt, die Preistabellen; lehnst du die Abfrage ab oder übergibst `-q`, bleibt das Audit vollständig offline.
+- **rsvg-convert** und **cwebp** - nur für `gelkao volume draw`, das die Karte als WebP rendert. `gelkao volume show` und alles unter `invoice` brauchen sie nicht.
 - Standard-POSIX-Tools (`grep`, `sed`, `head`), auf jedem Unix vorhanden.
 - **Windows:** in WSL (Windows Subsystem for Linux) ausführen; dann verhält es sich genau wie unter Linux oben.
 
@@ -71,188 +104,6 @@ ein zweiter Faktor wirken.
 
 Sicherheitsproblem gefunden oder willst du diese Aussagen selbst überprüfen? Siehe [SECURITY.md](SECURITY.md).
 
-## gelkao(1)
-
-**BEZEICHNUNG**
-
-gelkao – Hetzner-Rechnungen als CSV herunterladen und auditieren
-
-**ÜBERSICHT**
-
-```
-cat data/*.html | ./gelkao invoice audit - [-g "<projekt>"] [-d <verzeichnis>] [-f <pfad>]
-cat data/*.html | ./gelkao invoice list
-cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch [-d <verzeichnis>]
-printf 'K0000000000\n00000000-0000-0000-0000-000000000000\n' | ./gelkao invoice fetch [-d <verzeichnis>]
-./gelkao invoice audit [-g "<projekt>"] [-d <verzeichnis>] [-f <pfad>]
-```
-
-**BESCHREIBUNG**
-
-`gelkao` lädt die detaillierten Hetzner-Rechnungen herunter und auditiert sie.
-Ohne Subkommando wird der gesamte Ablauf ausgeführt: Rechnungs-HTML von der
-Standardeingabe (stdin) lesen, die Rechnungs-UUIDs extrahieren, jede Rechnung als
-CSV herunterladen und anschließend auditieren. Die einzelnen Schritte stehen auch
-als Subkommandos zur Verfügung. Der Download-Fortschritt wird auf die
-Standardfehlerausgabe (stderr) geschrieben, das Audit auf die Standardausgabe
-(stdout).
-
-Das erste Argument ist ein Subkommando (`list`, `fetch`, `audit`); ohne Angabe
-läuft der gesamte Ablauf. Die Kundennummer wird aus der Rechnungsseite selbst
-gelesen – es ist also nichts einzutippen und nichts landet in der Shell-History.
-
-Vor dem Audit bietet ein interaktiver Lauf an, die Preistabellen von `gelkao.com`
-zu aktualisieren (`[Y/n]`); bei Zustimmung werden die neuesten öffentlichen
-Preis- und Spezifikations-CSVs nach `live/` heruntergeladen, die anschließend den
-eingecheckten Snapshot überschreiben. Mit `n` wird abgelehnt; mit `-q` (oder bei
-jedem nicht-interaktiven Lauf) wird die Abfrage übersprungen und gegen die bereits
-vorhandenen Tabellen gerechnet.
-
-**OPTIONEN**
-
-- `-g "<projekt>"` – auditiert nur ein Hetzner-Projekt (die Spalte `grouping` der
-  Rechnung, z. B. `"Project prod"`). Nur beim vollständigen Lauf und bei `audit`
-  gültig; bei `list` oder `fetch` ein Fehler.
-- `-d <verzeichnis>` – Rechnungs-CSV-Verzeichnis (Vorgabe `data`). Gültig beim
-  vollständigen Lauf, bei `fetch` und `audit`; bei `list` ein Fehler.
-- `-f <pfad>` – SQLite-Datenbankdatei (Vorgabe `<verzeichnis>/gelkao.db`). Gültig
-  beim vollständigen Lauf und bei `audit`; bei `list` oder `fetch` ein Fehler.
-- `-q` – überspringt die interaktive Abfrage zur Preisaktualisierung und
-  auditiert gegen die bereits vorhandenen Preise. Wird impliziert, wenn die
-  Ausgabe kein Terminal ist (Pipe, CI).
-
-**UMGEBUNGSVARIABLEN**
-
-- `GELKAO_PRICES_URL` – Basis-URL für die Preisaktualisierung (Vorgabe `https://gelkao.com/live`).
-- `LIVE_DIR` – Speicherort der aktualisierten Preistabellen (Vorgabe `live`).
-
-**BEFEHLE**
-
-### gelkao invoice list
-
-Liest das HTML der Hetzner-Seite „Rechnungen verwalten“ von der Standardeingabe
-und gibt die UUID jeder Rechnung aus, eine pro Zeile. Die UUIDs werden aus den
-Detail-Links der einzelnen Rechnungen in der Form `https://usage.hetzner.com/<uuid>`
-ausgelesen. Üblicherweise liegen die gespeicherten Rechnungsseiten im Verzeichnis
-`data/`.
-
-**AUSGABE** – eine UUID pro Zeile, in der Reihenfolge der Seite. Nicht
-dedupliziert – beim Zusammenfügen mehrerer Seiten durch `sort -u` leiten
-(`cat data/*.html | ...`).
-
-**EXIT-STATUS** – `0` UUIDs gefunden · `1` keine gefunden (gibt eine Warnung auf
-die Standardfehlerausgabe aus – üblicherweise hat Hetzner das URL-Schema
-geändert).
-
-**EINSCHRÄNKUNGEN** – es werden nur Rechnungen ab dem 01.10.2024 aufgelistet. Der
-Detail-Link `usage.hetzner.com/<uuid>` gehört zum neuen Format für detaillierte
-Rechnungen, das Hetzner am 1. Oktober 2024 eingeführt hat; ältere Rechnungen
-verwenden numerische IDs (`/invoice/<id>/pdf`) ohne UUID und werden bewusst
-übersprungen. Sind alte Rechnungen vorhanden, ist mit weniger UUIDs als der
-Gesamtzahl der Zeilen auf der Seite zu rechnen.
-
-```
-cat data/invoice-list.html | ./gelkao list
-cat data/*.html | ./gelkao invoice list | sort -u
-```
-
-### gelkao invoice fetch
-
-Liest die Ausgabe von `gelkao invoice list` von der Standardeingabe – eine Zeile mit der
-Kundennummer (`K…`) und eine Rechnungs-UUID pro Zeile, in beliebiger Reihenfolge –
-und lädt jede detaillierte Rechnung als CSV von
-`https://usage.hetzner.com/<uuid>?csv&cn=<kundennummer>`
-herunter. Die Dateien werden in das Datenverzeichnis als `<kundennummer>-<YYYY-MM>-<uuid>.csv`
-geschrieben, wobei sich Jahr und Monat aus dem ersten ISO-Datum in der CSV
-ergeben. Da die UUID Teil des Dateinamens ist, wird eine bereits vorhandene
-Rechnung erkannt und **vor** dem Herunterladen übersprungen (der Monat wird bei
-der Suche als Platzhalter behandelt) – erneute Läufe und Wiederholungen
-verursachen somit keinen Netzwerk-Request für bereits erledigte Arbeit.
-
-Die Kundennummer stammt aus dem Datenstrom, nicht aus einem Argument.
-`-d <verzeichnis>` legt das Ausgabeverzeichnis fest (Vorgabe `data`).
-
-**AUSGABE** – `ok`-/`skip`-Fortschrittszeilen auf der Standardausgabe,
-`fail`-Zeilen auf der Standardfehlerausgabe und abschließend eine Zusammenfassung
-`Done. downloaded=N skipped=N failed=N` auf der Standardfehlerausgabe. Die
-CSV-Dateien landen im Datenverzeichnis.
-
-**EXIT-STATUS** – `0` abgeschlossen (einzelne Download-Fehler werden gemeldet,
-brechen den Lauf jedoch nicht ab) · `1` keine `K…`-Zeile auf der Standardeingabe
-oder zwei verschiedene (Ausgaben zweier `list`-Läufe für verschiedene Accounts
-aneinandergehängt). Wiederholungen derselben Nummer sind unproblematisch.
-
-**ANMERKUNGEN** – das Programm lädt sequenziell und ohne künstliche Verzögerung
-herunter, und das ist beabsichtigt. Eine Untersuchung des Endpunkts zeigt, dass
-er kein für den Client sichtbares Rate-Limit-Signal ausgibt: weder erfolgreiche
-(`200`) noch abgelehnte (`401`) Antworten von `usage.hetzner.com` enthalten
-`RateLimit-*`-, `Retry-After`- oder Kontingent-Header, und die Auslieferung
-erfolgt über Hetzners Edge-Cache (`server: HeRay`), nicht über die Cloud API – ein
-separates System mit einem dokumentierten Limit von 3600 Requests pro Stunde. Das
-Rechnungsvolumen ist gering (eine Datei pro Monat seit Einführung des Formats),
-und ein erneuter Lauf überspringt bereits heruntergeladene Rechnungen, ohne sie
-erneut abzurufen; ein unterbrochener oder gedrosselter Lauf lässt sich daher
-günstig wiederholen.
-
-**SICHERHEIT** – für das Herunterladen einer Rechnung sind zwei unabhängige
-Geheimnisse erforderlich – die rechnungsspezifische UUID und die Kundennummer des
-Accounts (der als `cn` übergebene `K…`-Wert). Weder ein Browser-Login noch ein
-Session-Cookie ist beteiligt; die beiden Werte zusammen bilden die Zugangsdaten,
-ähnlich einem zweiten Faktor. Hinweise:
-
-- Eine UUID allein lädt nichts herunter – die passende Kundennummer muss ebenfalls
-  angegeben werden. Diese Nummer ist jedoch für jede Rechnung des Accounts gleich
-  und weist wenig Entropie auf, sodass die UUID, sobald die Nummer bekannt ist,
-  praktisch das einzige rechnungsspezifische Geheimnis ist.
-- Beide Werte stehen in der gespeicherten Rechnungsseite; genau diese Datei ist
-  daher das schützenswerte Artefakt.
-- Sowohl die UUID-Liste als auch die Kundennummer sind als sensibel zu behandeln,
-  die heruntergeladenen CSVs als Abrechnungsdaten. `data/` ist standardmäßig per
-  gitignore ausgeschlossen – es aus der Versionsverwaltung, aus Protokollen
-  (Logs), Tickets und geteilten Ablagen heraushalten.
-
-```
-printf 'K0000000000\n00000000-0000-0000-0000-000000000000\n' | ./gelkao invoice fetch
-cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch
-```
-
-### gelkao invoice audit
-
-Mit `-` wird die Rechnungsseite von der Standardeingabe gelesen und der gesamte
-Ablauf ausgeführt – das entspricht `gelkao invoice list`, per Pipe an
-`gelkao invoice fetch` weitergegeben, gefolgt vom unten beschriebenen Audit. Die
-Kundennummer stammt aus der Seite, es ist also nichts zu übergeben. Das `-` darf
-vor oder nach den Optionen stehen.
-
-Ohne `-` wird die Standardeingabe nie gelesen; es läuft direkt das Audit der
-bereits im Datenverzeichnis liegenden CSVs.
-
-Baut eine wegwerfbare SQLite-Datenbank aus den Rechnungs-CSVs auf und gibt den
-Audit-Report aus. Die Tabellen werden aus `schema.sql` erstellt, jede `*.csv` im
-Datenverzeichnis wird in `raw_invoices` importiert, anschließend werden die Views
-aus `audit.sql` aufgebaut. Der Report besteht aus einem zusammenfassenden Kopf
-(Zeitraum, Währung, analysierte Server, Price Group, insgesamt bezahlt, aktuelle
-Run-Rate), einer einzeiligen Ersparnis-Angabe und einer monatsweisen Tabelle
-„bezahlt gegenüber optimal“ mit `#`-Balken. Auf einem Terminal werden die Zahlen
-fett dargestellt und Balken sowie Prozentwert jedes Monats nach Ersparnis-Stufe
-eingefärbt (rot `≥50 %`, gelb `20–49 %`, grün `<20 %`); bei einer Pipe oder
-Umleitung ist die Ausgabe schmucklos. Die Datenbank liegt unter `<verzeichnis>/gelkao.db`
-und ist ein wegwerfbarer Cache, der bei jedem Lauf aus den CSVs neu aufgebaut wird
-– ein Löschen ist unbedenklich.
-
-`-d <verzeichnis>` legt den Ordner mit den Rechnungs-CSVs fest (Vorgabe
-`data`); `-f <pfad>` legt den Datenbankpfad fest (Vorgabe `<verzeichnis>/gelkao.db`).
-Exit-Status: `0` abgeschlossen · `1` keine Rechnungs-CSVs im Datenverzeichnis
-gefunden, oder – wenn eine Seite hineingegeben wurde – keine Kundennummer darin,
-zwei verschiedene, oder keine UUIDs.
-
-```
-cat data/*.html | ./gelkao invoice audit -
-./gelkao invoice audit
-./gelkao invoice audit -g "Project prod"
-./gelkao invoice audit -d pages -f /tmp/x.db
-```
-
 ## Tests
 
 Die Unit- und Report-Tests sind hermetisch – kein Netzwerk, keine Zugangsdaten –
@@ -268,6 +119,7 @@ INVOICE_HTML=data/your-invoices.html bats tests/*.bats
 - `gelkao` teilt sich seine Logik mit `lib.sh`.
 - `tests/unit.bats` deckt diese Funktionen ohne Netzwerk und ohne Zugangsdaten ab.
 - `tests/report.bats` deckt die Feldstatistiken und die zusammengesetzte Ausgabe des Audit-Reports ab.
+- `tests/volume.bats` deckt das Einlesen der Platzierungstabelle, den Baum und die Farb- und Flächenlogik der Treemap ab.
 - `tests/badge.bats` deckt die reine Logik des Badge-Builders ab.
 - `tests/integration.bats` benötigt eine echte Kundennummer und eine echte Rechnungs-HTML-Seite.
 
