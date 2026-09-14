@@ -130,7 +130,7 @@ main() {
     --help|-h)    usage; exit 0 ;;
     invoice)      shift; invoice_cmd "$@" ;;
     volume)       shift; volume_cmd "$@" ;;
-    *)            die "unknown command: $1 — try 'invoice', or --help" ;;
+    *)            die "unknown command: $1 - try 'invoice', 'volume', or --help" ;;
   esac
 }
 

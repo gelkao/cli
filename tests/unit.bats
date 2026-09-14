@@ -154,6 +154,13 @@ HTML
   [[ "$output" = Usage:* ]]
 }
 
+@test "an unknown command names both commands, not just invoice" {
+  run "$ROOT/gelkao" bogus
+  [ "$status" -ne 0 ]
+  [[ "$output" = *"invoice"* ]]
+  [[ "$output" = *"volume"* ]]
+}
+
 @test "gelkao invoice -d is rejected for list" {
   run "$ROOT/gelkao" invoice list -d /tmp
   [ "$status" -ne 0 ]
