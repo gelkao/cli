@@ -26,10 +26,10 @@ Usage:
   -f <path>        database file (default: <dir>/gelkao.db)
   -q               skip the price-refresh prompt (non-interactive)
 
-  cat volumes.txt | gelkao volume show
+  cat volumes.tsv | gelkao volume show
                                      draw the leaf / volume pool / volume tree from the
                                      placement table Hetzner support sends you
-  cat volumes.txt | gelkao volume draw [-o <path>] [-t <volumes>]
+  cat volumes.tsv | gelkao volume draw [-o <path>] [-t <volumes>]
                                      render the same placement as a treemap webp
                                      (default: data/volumes.webp)
 
