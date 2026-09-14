@@ -83,7 +83,7 @@ Audit durchgelaufen? Poste dein Ergebnis in den [Discussions](https://github.com
 `gelkao` ist ein kleines Shell-Tool mit ein paar Standard-Abhängigkeiten:
 
 - **bash** 3.2+ - die mitgelieferte bash von macOS reicht.
-- **sqlite3** 3.8.3+ - die Audit-Engine.
+- **sqlite3** 3.8.3+ - rechnet das Audit und sortiert die Platzierungstabelle; beide Befehle brauchen es.
 - **curl** - um Rechnungen herunterzuladen (`fetch`) und, falls du die optionale Preisaktualisierung zulässt, die Preistabellen; lehnst du die Abfrage ab oder übergibst `-q`, bleibt das Audit vollständig offline.
 - **rsvg-convert** und **cwebp** - nur für `gelkao volume draw`, das die Karte als WebP rendert. `gelkao volume show` und alles unter `invoice` brauchen sie nicht.
 - Standard-POSIX-Tools (`grep`, `sed`, `head`), auf jedem Unix vorhanden.

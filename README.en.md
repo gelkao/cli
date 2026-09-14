@@ -83,7 +83,7 @@ Ran an audit? Post your result in [Discussions](https://github.com/gelkao/cli/di
 `gelkao` is a small shell tool with a few standard dependencies:
 
 - **bash** 3.2+ - the macOS system bash works.
-- **sqlite3** 3.8.3+ - the audit engine.
+- **sqlite3** 3.8.3+ - runs the audit and ranks the placement table; both commands need it.
 - **curl** - to download invoices (`fetch`) and, if you accept the optional price refresh, the price tables; decline the prompt or pass `-q` and the audit stays fully offline.
 - **rsvg-convert** and **cwebp** - only for `gelkao volume draw`, which renders the map as WebP. `gelkao volume show` and everything under `invoice` do not need them.
 - standard POSIX tools (`grep`, `sed`, `head`), present on any Unix.
