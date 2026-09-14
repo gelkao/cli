@@ -25,8 +25,8 @@ welche deiner Volumes am selben Netzwerk-Switch hängen. Auch dafür liegt ein
 Beispiel im Repo:
 
 ```
-./gelkao volume show < examples/example-volumes-real-fleet.tsv
 ./gelkao volume draw < examples/example-volumes-real-fleet.tsv
+./gelkao volume show < examples/example-volumes-real-fleet.tsv
 ```
 
 <p align="center"><img src="img/volume-demo.webp" alt="Beispielausgabe von gelkao volume draw"></p>
