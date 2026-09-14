@@ -12,10 +12,25 @@ on your machine, and exits. Grep the source to prove it.
 
 | Command | Question | Manual |
 |---|---|---|
-| `gelkao invoice` | What are you overpaying? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) (German) |
 | `gelkao volume` | What fails together? | [gelkao volume](https://gelkao.com/docs/latest/volume/) (German) |
+| `gelkao invoice` | What are you overpaying? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) (German) |
 
 ## Quick start
+
+### gelkao volume
+
+The placement table Hetzner support sends you on request tells you which of your
+volumes hang off the same network switch. There is an example for that in the
+repo too:
+
+```
+./gelkao volume show < examples/example-volumes-real-fleet.tsv
+./gelkao volume draw < examples/example-volumes-real-fleet.tsv
+```
+
+<p align="center"><img src="img/volume-demo.webp" alt="Sample output of gelkao volume draw"></p>
+
+<p align="center">🟥 too many volumes on one leaf · 🟧 watch it · 🟩 fine</p>
 
 ### gelkao invoice
 
@@ -40,36 +55,21 @@ Then run it on your own bill.
 
 Power users: `cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch && ./gelkao invoice audit`
 
-### gelkao volume
-
-The placement table Hetzner support sends you on request tells you which of your
-volumes hang off the same network switch. There is an example for that in the
-repo too:
-
-```
-./gelkao volume show < examples/example-volumes-real-fleet.tsv
-./gelkao volume draw < examples/example-volumes-real-fleet.tsv
-```
-
-<p align="center"><img src="img/volume-demo.webp" alt="Sample output of gelkao volume draw"></p>
-
-<p align="center">🟥 too many volumes on one leaf · 🟧 watch it · 🟩 fine</p>
-
 ## Documentation
 
 The full manual lives at [gelkao.com/docs/latest](https://gelkao.com/docs/latest/) -
-[gelkao invoice](https://gelkao.com/docs/latest/invoice/) and
-[gelkao volume](https://gelkao.com/docs/latest/volume/). It is written in German.
+[gelkao volume](https://gelkao.com/docs/latest/volume/) and
+[gelkao invoice](https://gelkao.com/docs/latest/invoice/). It is written in German.
 
 ## Real-world example
-
-[You're probably on the wrong Cloud box](https://gelkao.com/blog/how-cost-efficient-is-mytimeplan-com-cloud/)
-is a case study of [mytimeplan.com](https://mytimeplan.com)'s real Hetzner fleet.
-Exact numbers: 14 months, 193 boxes, €1,878/mo, **23% overpaid.**
 
 [Can you build a fault-tolerant system on a small budget on Hetzner Cloud?](https://gelkao.com/blog/is-it-possible-to-build-fault-tolerant-budget-system-on-hetzner-cloud/)
 (German) maps a real 199-volume fleet: six switches carry more than half of them,
 one of them 24 on its own.
+
+[You're probably on the wrong Cloud box](https://gelkao.com/blog/how-cost-efficient-is-mytimeplan-com-cloud/)
+is a case study of [mytimeplan.com](https://mytimeplan.com)'s real Hetzner fleet.
+Exact numbers: 14 months, 193 boxes, €1,878/mo, **23% overpaid.**
 
 ## Share your number
 
@@ -115,8 +115,8 @@ INVOICE_HTML=data/your-invoices.html bats tests/*.bats
 
 - `gelkao` shares its logic with `lib.sh`.
 - `tests/unit.bats` covers those functions with no network and no credentials.
-- `tests/report.bats` covers the audit report's field stats and assembled output.
 - `tests/volume.bats` covers parsing the placement table, the tree, and the treemap's colour and layout logic.
+- `tests/report.bats` covers the audit report's field stats and assembled output.
 - `tests/badge.bats` covers the badge builder's pure logic.
 - `tests/integration.bats` requires a real customer number and a real invoice HTML page.
 
