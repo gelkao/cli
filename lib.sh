@@ -122,7 +122,7 @@ customer_number_in_stream() {
     [[ -z "$cn" || "$cn" = "$line" ]] || die "several customer numbers on stdin ($cn and $line) - fetch one account at a time"
     cn=$line
   done
-  [[ -n "$cn" ]] || die "no customer number on stdin - pipe the output of 'gelkao list' in"
+  [[ -n "$cn" ]] || die "no customer number on stdin - pipe the output of 'gelkao invoice list' in"
   printf '%s\n' "$cn"
 }
 
