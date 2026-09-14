@@ -123,11 +123,11 @@ INVOICE_HTML=data/your-invoices.html bats tests/*.bats
 - `tests/badge.bats` deckt die reine Logik des Badge-Builders ab.
 - `tests/integration.bats` benötigt eine echte Kundennummer und eine echte Rechnungs-HTML-Seite.
 
-### Integration-Badge
+### Integrations-Badge
 
 Weil der Integrationstest nicht in der Cloud-CI laufen kann, führt `./badge.sh`
 ihn lokal aus und veröffentlicht die Anzahl bestandener Tests in einem Gist, das
-das Integration-Badge im README speist – so spiegelt das Badge einen echten Lauf
+das Integrations-Badge im README speist – so spiegelt das Badge einen echten Lauf
 gegen echte Rechnungen wider, nicht die CI:
 
 ```
