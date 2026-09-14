@@ -10,6 +10,8 @@ on your machine, and exits. Grep the source to prove it.
 [![CI](https://github.com/gelkao/cli/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gelkao/cli/actions/workflows/ci.yml)
 [![integration](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74/raw/gelkao-cli-integration.json)](https://gist.github.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74)
 
+**Questions? [GitHub Discussions](https://github.com/gelkao/cli/discussions) or [private message on the Hetzner forum](https://forum.hetzner.com/wcf/index.php?conversation-add/&userID=41011).**
+
 | Command | Question | Manual |
 |---|---|---|
 | `gelkao volume` | What fails together? | [gelkao volume](https://gelkao.com/docs/latest/volume/) (German) |

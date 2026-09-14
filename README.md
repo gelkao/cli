@@ -11,6 +11,8 @@ hast, rechnet auf deinem Rechner und ist fertig. Grep durch den Quellcode und
 [![CI](https://github.com/gelkao/cli/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gelkao/cli/actions/workflows/ci.yml)
 [![integration](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74/raw/gelkao-cli-integration.json)](https://gist.github.com/dominikzalewski/696b0e161d53e5b752b2c6bc7c0fbf74)
 
+**Fragen? [Discussions](https://github.com/gelkao/cli/discussions) oder [private Nachricht im Hetzner-Forum](https://forum.hetzner.com/wcf/index.php?conversation-add/&userID=41011).**
+
 | Befehl | Frage | Handbuch |
 |---|---|---|
 | `gelkao volume` | Was fällt gemeinsam aus? | [gelkao volume](https://gelkao.com/docs/latest/volume/) |
