@@ -12,10 +12,15 @@ on your machine, and exits. Grep the source to prove it.
 
 **Questions? [GitHub Discussions](https://github.com/gelkao/cli/discussions) or [private message on the Hetzner forum](https://forum.hetzner.com/wcf/index.php?conversation-add/&userID=41011).**
 
+[Website](https://gelkao.com) |
+[Documentation](https://gelkao.com/docs/latest/)
+
 | Command | Question | Manual |
 |---|---|---|
 | `gelkao volume` | What fails together? | [gelkao volume](https://gelkao.com/docs/latest/volume/) (German) |
 | `gelkao invoice` | What are you overpaying? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) (German) |
+
+The manual is written in German.
 
 ## Quick start
 
@@ -56,12 +61,6 @@ Then run it on your own bill.
 <p align="center">🟥 ≥ 50% · 🟧 20–49% · 🟩 under 20%</p>
 
 Power users: `cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch && ./gelkao invoice audit`
-
-## Documentation
-
-The full manual lives at [gelkao.com/docs/latest](https://gelkao.com/docs/latest/) -
-[gelkao volume](https://gelkao.com/docs/latest/volume/) and
-[gelkao invoice](https://gelkao.com/docs/latest/invoice/). It is written in German.
 
 ## Real-world example
 
