@@ -13,16 +13,16 @@ version_number() {
 }
 
 require_sqlite() {
-  command -v sqlite3 >/dev/null 2>&1 || die "sqlite3 not found — install sqlite3 (3.8.3+ required)"
+  command -v sqlite3 >/dev/null 2>&1 || die "sqlite3 not found - install sqlite3 (3.8.3+ required)"
   local ver
   ver=$(sqlite3 --version | cut -d' ' -f1)
   if [[ "$(version_number "$ver")" -lt "$(version_number "$SQLITE_FLOOR")" ]]; then
-    die "sqlite3 $ver is too old — need $SQLITE_FLOOR+ for common table expressions"
+    die "sqlite3 $ver is too old - need $SQLITE_FLOOR+ for common table expressions"
   fi
 }
 
 require_curl() {
-  command -v curl >/dev/null 2>&1 || die "curl not found — install curl to download invoices"
+  command -v curl >/dev/null 2>&1 || die "curl not found - install curl to download invoices"
 }
 
 require_rsvg() {
@@ -52,8 +52,8 @@ extract_cn() {
   n=$(printf '%s' "$found" | grep -c . || true)
   case "$n" in
     1) printf '%s\n' "$found" ;;
-    0) die "no customer number in the invoice page — expected a K followed by digits" ;;
-    *) die "several customer numbers in the input ($(printf '%s' "$found" | tr '\n' ' ')) — audit one account at a time" ;;
+    0) die "no customer number in the invoice page - expected a K followed by digits" ;;
+    *) die "several customer numbers in the input ($(printf '%s' "$found" | tr '\n' ' ')) - audit one account at a time" ;;
   esac
 }
 
@@ -65,7 +65,7 @@ list_invoices() {
   cn=$(printf '%s' "$page" | extract_cn) || exit 1
   uuids=$(printf '%s' "$page" | extract_uuids || true)
   if [[ -z "$uuids" ]]; then
-    echo "warning: no UUIDs found — has Hetzner changed the invoice URL?" >&2
+    echo "warning: no UUIDs found - has Hetzner changed the invoice URL?" >&2
     return 1
   fi
   printf '%s\n%s\n' "$cn" "$uuids"
@@ -119,10 +119,10 @@ customer_number_in_stream() {
   local line cn=''
   while read -r line; do
     is_customer_number "$line" || continue
-    [[ -z "$cn" || "$cn" = "$line" ]] || die "several customer numbers on stdin ($cn and $line) — fetch one account at a time"
+    [[ -z "$cn" || "$cn" = "$line" ]] || die "several customer numbers on stdin ($cn and $line) - fetch one account at a time"
     cn=$line
   done
-  [[ -n "$cn" ]] || die "no customer number on stdin — pipe the output of 'gelkao list' in"
+  [[ -n "$cn" ]] || die "no customer number on stdin - pipe the output of 'gelkao list' in"
   printf '%s\n' "$cn"
 }
 
@@ -197,7 +197,7 @@ update_prices() {
 maybe_refresh_prices() {
   local base=$1 live=$2 quiet=${3:-0} ans
   if [ "$quiet" = 1 ] || [ ! -t 1 ]; then return 0; fi
-  printf 'Hetzner changes its prices every few months — fetch the latest from %s? [Y/n] ' "$base" > /dev/tty
+  printf 'Hetzner changes its prices every few months - fetch the latest from %s? [Y/n] ' "$base" > /dev/tty
   read -r ans < /dev/tty || return 0
   case "$ans" in [Nn]*) return 0 ;; esac
   update_prices "$base" "$live" || echo "price refresh failed; keeping committed prices" >&2

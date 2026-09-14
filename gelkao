@@ -38,7 +38,7 @@ Usage:
 
 The full manual is at https://gelkao.com/docs/latest/
 
-The customer number is read from the invoice page itself — there is nothing to type.
+The customer number is read from the invoice page itself - there is nothing to type.
 EOF
 }
 
@@ -93,9 +93,9 @@ invoice_cmd() {
            [[ -z "$grouping" ]] || die "-g is not valid for list"; [[ "$data_dir_set" = 0 ]] || die "-d is not valid for list"; [[ -z "$db" ]] || die "-f is not valid for list"; cmd_list "$@" ;;
     fetch) [[ -z "$from_stdin" ]] || die "- is not valid for fetch; it always reads stdin";
            [[ -z "$grouping" ]] || die "-g is not valid for fetch"; [[ -z "$db" ]] || die "-f is not valid for fetch"; cmd_fetch "$data_dir" ;;
-    audit) [[ $# -eq 0 ]] || die "unexpected argument: $1 — use - to read the invoice page from stdin"
+    audit) [[ $# -eq 0 ]] || die "unexpected argument: $1 - use - to read the invoice page from stdin"
            cmd_audit "$grouping" "$quiet" "$data_dir" "$db" "$from_stdin" ;;
-    *)     die "unknown invoice subcommand: $verb — try list, fetch or audit" ;;
+    *)     die "unknown invoice subcommand: $verb - try list, fetch or audit" ;;
   esac
 }
 
