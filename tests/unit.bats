@@ -161,6 +161,12 @@ HTML
   [[ "$output" = *"volume"* ]]
 }
 
+@test "the fetch error points at a command that still exists" {
+  run bash -c "printf 'not-a-number\n' | '$ROOT/gelkao' invoice fetch"
+  [ "$status" -ne 0 ]
+  [[ "$output" = *"gelkao invoice list"* ]]
+}
+
 @test "gelkao invoice -d is rejected for list" {
   run "$ROOT/gelkao" invoice list -d /tmp
   [ "$status" -ne 0 ]
