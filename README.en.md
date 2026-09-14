@@ -15,10 +15,12 @@ on your machine, and exits. Grep the source to prove it.
 [Website](https://gelkao.com) |
 [Documentation](https://gelkao.com/docs/latest/)
 
-| Command | Question | Manual |
-|---|---|---|
-| `gelkao volume` | What fails together? | [gelkao volume](https://gelkao.com/docs/latest/volume/) (German) |
-| `gelkao invoice` | What are you overpaying? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) (German) |
+## Features
+
+| Command | Question |
+|---|---|
+| [`gelkao volume`](https://gelkao.com/docs/latest/volume/) | What fails together? |
+| [`gelkao invoice`](https://gelkao.com/docs/latest/invoice/) | What are you overpaying? |
 
 The manual is written in German.
 
