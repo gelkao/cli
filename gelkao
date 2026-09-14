@@ -36,6 +36,8 @@ Usage:
   -t <volumes>     how many volumes you can afford to lose at once; a leaf or
                    volume group holding that many is drawn red (default: 10)
 
+The full manual is at https://gelkao.com/docs/latest/
+
 The customer number is read from the invoice page itself — there is nothing to type.
 EOF
 }
