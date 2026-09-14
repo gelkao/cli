@@ -13,10 +13,25 @@ hast, rechnet auf deinem Rechner und ist fertig. Grep durch den Quellcode und
 
 | Befehl | Frage | Handbuch |
 |---|---|---|
-| `gelkao invoice` | Was zahlst du zu viel? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) |
 | `gelkao volume` | Was fällt gemeinsam aus? | [gelkao volume](https://gelkao.com/docs/latest/volume/) |
+| `gelkao invoice` | Was zahlst du zu viel? | [gelkao invoice](https://gelkao.com/docs/latest/invoice/) |
 
 ## Schnellstart
+
+### gelkao volume
+
+Die Platzierungstabelle, die dir der Hetzner-Support auf Anfrage schickt, sagt dir,
+welche deiner Volumes am selben Netzwerk-Switch hängen. Auch dafür liegt ein
+Beispiel im Repo:
+
+```
+./gelkao volume show < examples/example-volumes-real-fleet.tsv
+./gelkao volume draw < examples/example-volumes-real-fleet.tsv
+```
+
+<p align="center"><img src="img/volume-demo.webp" alt="Beispielausgabe von gelkao volume draw"></p>
+
+<p align="center">🟥 zu viele Volumes auf einem Leaf · 🟧 Achtung · 🟩 unkritisch</p>
 
 ### gelkao invoice
 
@@ -42,36 +57,21 @@ Dann lass es auf deine eigene Rechnung los.
 
 Für Power-User: `cat data/*.html | ./gelkao invoice list | ./gelkao invoice fetch && ./gelkao invoice audit`
 
-### gelkao volume
-
-Die Platzierungstabelle, die dir der Hetzner-Support auf Anfrage schickt, sagt dir,
-welche deiner Volumes am selben Netzwerk-Switch hängen. Auch dafür liegt ein
-Beispiel im Repo:
-
-```
-./gelkao volume show < examples/example-volumes-real-fleet.tsv
-./gelkao volume draw < examples/example-volumes-real-fleet.tsv
-```
-
-<p align="center"><img src="img/volume-demo.webp" alt="Beispielausgabe von gelkao volume draw"></p>
-
-<p align="center">🟥 zu viele Volumes auf einem Leaf · 🟧 Achtung · 🟩 unkritisch</p>
-
 ## Dokumentation
 
 Das vollständige Handbuch steht auf [gelkao.com/docs/latest](https://gelkao.com/docs/latest/) -
-[gelkao invoice](https://gelkao.com/docs/latest/invoice/) und
-[gelkao volume](https://gelkao.com/docs/latest/volume/).
+[gelkao volume](https://gelkao.com/docs/latest/volume/) und
+[gelkao invoice](https://gelkao.com/docs/latest/invoice/).
 
 ## Beispiel aus der Praxis
-
-[Du bist wahrscheinlich auf der falschen Cloud-Box](https://gelkao.com/blog/how-cost-efficient-is-mytimeplan-com-cloud/) (englisch)
-ist eine Fallstudie über die echte Hetzner-Flotte von [mytimeplan.com](https://mytimeplan.com).
-Exakte Zahlen: 14 Monate, 193 Server, 1.878 €/Monat, **23 % zu viel gezahlt.**
 
 [Kann man auf der Hetzner Cloud ein ausfallsicheres System mit kleinem Budget bauen?](https://gelkao.com/blog/is-it-possible-to-build-fault-tolerant-budget-system-on-hetzner-cloud/)
 kartiert eine echte Flotte mit 199 Volumes: sechs Switches tragen mehr als die
 Hälfte davon, einer davon allein 24.
+
+[Du bist wahrscheinlich auf der falschen Cloud-Box](https://gelkao.com/blog/how-cost-efficient-is-mytimeplan-com-cloud/) (englisch)
+ist eine Fallstudie über die echte Hetzner-Flotte von [mytimeplan.com](https://mytimeplan.com).
+Exakte Zahlen: 14 Monate, 193 Server, 1.878 €/Monat, **23 % zu viel gezahlt.**
 
 ## Teile dein Ergebnis
 
@@ -118,8 +118,8 @@ INVOICE_HTML=data/your-invoices.html bats tests/*.bats
 
 - `gelkao` teilt sich seine Logik mit `lib.sh`.
 - `tests/unit.bats` deckt diese Funktionen ohne Netzwerk und ohne Zugangsdaten ab.
-- `tests/report.bats` deckt die Feldstatistiken und die zusammengesetzte Ausgabe des Audit-Reports ab.
 - `tests/volume.bats` deckt das Einlesen der Platzierungstabelle, den Baum und die Farb- und Flächenlogik der Treemap ab.
+- `tests/report.bats` deckt die Feldstatistiken und die zusammengesetzte Ausgabe des Audit-Reports ab.
 - `tests/badge.bats` deckt die reine Logik des Badge-Builders ab.
 - `tests/integration.bats` benötigt eine echte Kundennummer und eine echte Rechnungs-HTML-Seite.
 
