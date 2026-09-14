@@ -24,8 +24,8 @@ volumes hang off the same network switch. There is an example for that in the
 repo too:
 
 ```
-./gelkao volume show < examples/example-volumes-real-fleet.tsv
 ./gelkao volume draw < examples/example-volumes-real-fleet.tsv
+./gelkao volume show < examples/example-volumes-real-fleet.tsv
 ```
 
 <p align="center"><img src="img/volume-demo.webp" alt="Sample output of gelkao volume draw"></p>
