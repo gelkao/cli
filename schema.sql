@@ -22,6 +22,8 @@ CREATE TABLE prices (
   price_monthly  REAL
 );
 
+CREATE INDEX prices_lookup ON prices (type, currency, price_group, effective_from);
+
 CREATE TABLE server_types (
   type    TEXT,
   vcpu    INTEGER,
